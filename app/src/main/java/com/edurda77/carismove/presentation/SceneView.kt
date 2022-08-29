@@ -14,17 +14,18 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
     private lateinit var rDest : Rect
     private lateinit var paint: Paint
     private lateinit var pm: PathMeasure
-    private lateinit var lastItem: PointF
     private var fSegment: Float = 0f
-    val ptLine = Path()
-    private val currentStep = 0
+    private val ptLine = Path()
+    private var currentStep = 0
     private val points = mutableListOf<PointF>()
 
 
     override fun onDraw(canvas: Canvas) {
         val bmpRoad = BitmapFactory.decodeResource(resources, R.drawable.ic_road)
         rSrc = Rect(0, 0, bmpRoad.width, bmpRoad.height)
-        bmpCar = BitmapFactory.decodeResource(resources, R.drawable.ic_car)
+        val options = BitmapFactory.Options()
+        options.inSampleSize = 30
+        bmpCar = BitmapFactory.decodeResource(resources, R.drawable.ic_car, options)
         rDest = Rect(0, 0, width, height)
         canvas.drawBitmap(bmpRoad, rSrc, rDest, null)
         addToList()
@@ -35,11 +36,24 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
         points.forEach {
             ptLine.lineTo(it.x, it.y)
         }
+        pm = PathMeasure(ptLine, false)
+        fSegment = pm.length/MAX_STEP
+
         paint = Paint(Paint.ANTI_ALIAS_FLAG)
         paint.color = Color.RED
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 3F
         canvas.drawPath(ptLine, paint)
+        val mxTransform = Matrix()
+        if (currentStep<MAX_STEP) {
+            pm.getMatrix(fSegment*currentStep, mxTransform, PathMeasure.POSITION_MATRIX_FLAG)
+            mxTransform.preTranslate(-bmpCar.width.toFloat()+50, -bmpCar.height.toFloat()+25)
+            canvas.drawBitmap(bmpCar, mxTransform,null)
+            ++currentStep
+            invalidate()
+        } else {
+            currentStep=0
+        }
         super.onDraw(canvas)
     }
 
@@ -59,6 +73,7 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
         if(event?.action==MotionEvent.ACTION_DOWN) {
             //println("${event.x}   ${event.y}")
             //points.add(PointF(event.x, event.y))
+            invalidate()
             return true
         }
         return false
