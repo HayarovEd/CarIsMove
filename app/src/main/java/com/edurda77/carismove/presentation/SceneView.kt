@@ -29,21 +29,25 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
         rDest = Rect(0, 0, width, height)
         canvas.drawBitmap(bmpRoad, rSrc, rDest, null)
         addToList()
-        val point = points.first()
 
-        ptLine.moveTo(point.x, point.y)
-
-        points.forEach {
-            ptLine.lineTo(it.x, it.y)
-        }
-        pm = PathMeasure(ptLine, false)
-        fSegment = pm.length/MAX_STEP
 
         paint = Paint(Paint.ANTI_ALIAS_FLAG)
         paint.color = Color.RED
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 3F
-        canvas.drawPath(ptLine, paint)
+        var point = points.first()
+
+        ptLine.moveTo(point.x, point.y)
+
+        points.forEach {
+            ptLine.lineTo(it.x, it.y)
+            canvas.drawLine(point.x, point.y, it.x, it.y, paint)
+            point = it
+        }
+        pm = PathMeasure(ptLine, false)
+        fSegment = pm.length/MAX_STEP
+
+        //canvas.drawPath(ptLine, paint)
         val mxTransform = Matrix()
         if (currentStep<MAX_STEP) {
             pm.getMatrix(fSegment*currentStep, mxTransform, PathMeasure.POSITION_MATRIX_FLAG)
@@ -73,7 +77,7 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
         if(event?.action==MotionEvent.ACTION_DOWN) {
             //println("${event.x}   ${event.y}")
             //points.add(PointF(event.x, event.y))
-            invalidate()
+            //invalidate()
             return true
         }
         return false
