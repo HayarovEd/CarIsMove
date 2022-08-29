@@ -9,12 +9,10 @@ import com.edurda77.carismove.R
 const val MAX_STEP = 100
 
 class SceneView @JvmOverloads constructor (context: Context): View(context) {
-    private lateinit var bmpRoad : Bitmap
     private lateinit var bmpCar : Bitmap
     private var rSrc = Rect()
     private lateinit var rDest : Rect
     private lateinit var paint: Paint
-    //private var ptLine: Path? = null
     private lateinit var pm: PathMeasure
     private lateinit var lastItem: PointF
     private var fSegment: Float = 0f
@@ -30,7 +28,7 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
         rDest = Rect(0, 0, width, height)
         canvas.drawBitmap(bmpRoad, rSrc, rDest, null)
         addToList()
-        var point = points.first()
+        val point = points.first()
 
         ptLine.moveTo(point.x, point.y)
 
@@ -59,7 +57,7 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if(event?.action==MotionEvent.ACTION_DOWN) {
-            println("${event.x}   ${event.y}")
+            //println("${event.x}   ${event.y}")
             //points.add(PointF(event.x, event.y))
             return true
         }
