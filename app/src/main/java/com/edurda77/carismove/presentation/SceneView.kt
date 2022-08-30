@@ -50,7 +50,7 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
         //canvas.drawPath(ptLine, paint)
         val mxTransform = Matrix()
         if (currentStep<MAX_STEP) {
-            pm.getMatrix(fSegment*currentStep, mxTransform, PathMeasure.POSITION_MATRIX_FLAG)
+            pm.getMatrix(fSegment*currentStep, mxTransform, PathMeasure.POSITION_MATRIX_FLAG+PathMeasure.TANGENT_MATRIX_FLAG)
             mxTransform.preTranslate(-bmpCar.width.toFloat()+50, -bmpCar.height.toFloat()+25)
             canvas.drawBitmap(bmpCar, mxTransform,null)
             ++currentStep
