@@ -18,6 +18,7 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
     private val ptLine = Path()
     private var currentStep = 0
     private val points = mutableListOf<PointF>()
+    private var isToutch = false
 
 
     override fun onDraw(canvas: Canvas) {
@@ -44,19 +45,26 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
             canvas.drawLine(point.x, point.y, it.x, it.y, paint)
             point = it
         }
-        pm = PathMeasure(ptLine, false)
-        fSegment = pm.length/MAX_STEP
-
-        //canvas.drawPath(ptLine, paint)
-        val mxTransform = Matrix()
-        if (currentStep<MAX_STEP) {
-            pm.getMatrix(fSegment*currentStep, mxTransform, PathMeasure.POSITION_MATRIX_FLAG+PathMeasure.TANGENT_MATRIX_FLAG)
-            mxTransform.preTranslate(-bmpCar.width.toFloat()+50, -bmpCar.height.toFloat()+25)
-            canvas.drawBitmap(bmpCar, mxTransform,null)
-            ++currentStep
-            invalidate()
-        } else {
-            currentStep=0
+        if (isToutch) {
+            pm = PathMeasure(ptLine, false)
+            fSegment = pm.length/MAX_STEP
+            val mxTransform = Matrix()
+            if (currentStep < MAX_STEP) {
+                pm.getMatrix(
+                    fSegment * currentStep,
+                    mxTransform,
+                    PathMeasure.POSITION_MATRIX_FLAG + PathMeasure.TANGENT_MATRIX_FLAG
+                )
+                mxTransform.preTranslate(
+                    -bmpCar.width.toFloat() + 50,
+                    -bmpCar.height.toFloat() + 25
+                )
+                canvas.drawBitmap(bmpCar, mxTransform, null)
+                ++currentStep
+                invalidate()
+            } else {
+                currentStep = 0
+            }
         }
         super.onDraw(canvas)
     }
@@ -77,7 +85,9 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
         if(event?.action==MotionEvent.ACTION_DOWN) {
             //println("${event.x}   ${event.y}")
             //points.add(PointF(event.x, event.y))
-            //invalidate()
+
+            isToutch=true
+            invalidate()
             return true
         }
         return false
