@@ -37,7 +37,6 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 3F
         var point = points.first()
-
         ptLine.moveTo(point.x, point.y)
 
         points.forEach {
@@ -64,9 +63,19 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
                 invalidate()
             } else {
                 currentStep = 0
+                isToutch = false
+                initStart(canvas)
+
             }
+        } else {
+            initStart(canvas)
         }
         super.onDraw(canvas)
+    }
+
+    private fun initStart(canvas:Canvas) {
+        val start = points.first()
+        canvas.drawBitmap(bmpCar, start.x, start.y-20, null)
     }
 
     private fun addToList() {
@@ -83,9 +92,6 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if(event?.action==MotionEvent.ACTION_DOWN) {
-            //println("${event.x}   ${event.y}")
-            //points.add(PointF(event.x, event.y))
-
             isToutch=true
             invalidate()
             return true
