@@ -1,5 +1,6 @@
 package com.edurda77.carismove.presentation
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.view.MotionEvent
@@ -14,12 +15,13 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
     private var rSrc = Rect()
     private lateinit var rDest : Rect
     private lateinit var paint: Paint
+    private lateinit var regionTouch: RectF
     private lateinit var pm: PathMeasure
     private var fSegment: Float = 0f
     private val ptLine = Path()
     private var currentStep = 0
     private val points = mutableListOf<PointF>()
-    private var isToutch = false
+    private var isTouch = false
 
 
     override fun onDraw(canvas: Canvas) {
@@ -34,7 +36,7 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
             canvas.drawLine(point.x, point.y, it.x, it.y, paint)
             point = it
         }
-        if (isToutch) {
+        if (isTouch) {
             pm = PathMeasure(ptLine, false)
             fSegment = pm.length/MAX_STEP
             val mxTransform = Matrix()
@@ -53,7 +55,7 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
                 invalidate()
             } else {
                 currentStep = 0
-                isToutch = false
+                isTouch = false
                 initStart(canvas)
 
             }
@@ -76,7 +78,15 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
 
     private fun initStart(canvas:Canvas) {
         val start = points.first()
-        canvas.drawBitmap(bmpCar, start.x, start.y-20, null)
+        canvas.drawBitmap(bmpCar, start.x, start.y - 20, null)
+        paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        setPaint(paint)
+        regionTouch = RectF(
+            start.x,
+            (start.y) - bmpCar.height / 2,
+            bmpCar.width.toFloat(),
+            (start.y + 10) + bmpCar.height / 2
+        )
     }
 
     private fun addToList() {
@@ -91,9 +101,11 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
         points.add(PointF(1039.038F, 1468.2091F))
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if(event?.action==MotionEvent.ACTION_DOWN) {
-            isToutch=true
+        val action = event?.actionMasked
+        if (action == MotionEvent.ACTION_DOWN && regionTouch.contains(event.x, event.y)) {
+            isTouch = true
             invalidate()
             return true
         }

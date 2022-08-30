@@ -9,17 +9,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
 
-    /*private val drawView: SceneView by lazy {
-        layoutInflater.inflate(R.layout.view_draw, null) as SceneView
-    }*/
-
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         val sceneView = SceneView(this)
         setContentView(sceneView)
-
-        //drawView.sceneView()
     }
 
 
