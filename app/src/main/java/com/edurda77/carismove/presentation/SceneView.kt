@@ -5,6 +5,7 @@ import android.graphics.*
 import android.view.MotionEvent
 import android.view.View
 import com.edurda77.carismove.R
+import com.edurda77.carismove.entity.setPaint
 
 const val MAX_STEP = 100
 
@@ -22,20 +23,9 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
 
 
     override fun onDraw(canvas: Canvas) {
-        val bmpRoad = BitmapFactory.decodeResource(resources, R.drawable.ic_road)
-        rSrc = Rect(0, 0, bmpRoad.width, bmpRoad.height)
-        val options = BitmapFactory.Options()
-        options.inSampleSize = 30
-        bmpCar = BitmapFactory.decodeResource(resources, R.drawable.ic_car, options)
-        rDest = Rect(0, 0, width, height)
-        canvas.drawBitmap(bmpRoad, rSrc, rDest, null)
-        addToList()
-
-
+        initBmp(canvas)
         paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        paint.color = Color.RED
-        paint.style = Paint.Style.STROKE
-        paint.strokeWidth = 3F
+        setPaint(paint)
         var point = points.first()
         ptLine.moveTo(point.x, point.y)
 
@@ -71,6 +61,17 @@ class SceneView @JvmOverloads constructor (context: Context): View(context) {
             initStart(canvas)
         }
         super.onDraw(canvas)
+    }
+
+    private fun initBmp(canvas:Canvas) {
+        val bmpRoad = BitmapFactory.decodeResource(resources, R.drawable.ic_road)
+        rSrc = Rect(0, 0, bmpRoad.width, bmpRoad.height)
+        val options = BitmapFactory.Options()
+        options.inSampleSize = 30
+        bmpCar = BitmapFactory.decodeResource(resources, R.drawable.ic_car, options)
+        rDest = Rect(0, 0, width, height)
+        canvas.drawBitmap(bmpRoad, rSrc, rDest, null)
+        addToList()
     }
 
     private fun initStart(canvas:Canvas) {
